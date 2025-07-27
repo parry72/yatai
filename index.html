@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>2048 AI 最適手</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background: #eee;
+      font-size: 18px;
+      line-height: 60px;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>2048 AI 最適手</h1>
+  <div class="grid" id="board"></div>
+  <button onclick="suggestMove()">最適手を表示</button>
+  <p id="moveResult"></p>
+
+  <!-- AI ライブラリ -->
+  <script src="https://rawcdn.githack.com/nneonneo/2048-ai/master/js/ai.js"></script>
+
+  <script>
+    const board = document.getElementById("board");
+    const maxCount = 11;
+    const labels = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Max"];
+
+    for (let i = 0; i < 16; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.count = 0;
+      cell.textContent = "";
+      cell.addEventListener("click", () => {
+        let count = parseInt(cell.dataset.count);
+        count = (count + 1) % (maxCount + 1);
+        cell.dataset.count = count;
+        cell.textContent = labels[count];
+      });
+      board.appendChild(cell);
+    }
+
+    function getGameState() {
+      return Array.from(document.querySelectorAll(".cell")).map(cell => {
+        let c = parseInt(cell.dataset.count);
+        return c === 0 ? 0 : Math.pow(2, c);
+      });
+    }
+
+    function suggestMove() {
+      const input = getGameState();
+      try {
+        const ai = new AI();
+        const move = ai.getMove(input);
+        const arrows = ["←", "↑", "→", "↓"];
+        document.getElementById("moveResult").textContent =
+          move === -1 ? "合法手なし（詰み）" : "最適手: " + arrows[move];
+      } catch (e) {
+        document.getElementById("moveResult").textContent = "AIエラー: " + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
