@@ -38,7 +38,7 @@
   <button onclick="suggestMove()">最適手を表示</button>
   <p id="moveResult"></p>
 
-  <!-- AI ライブラリ -->
+  <!-- ✅ 修正済み：ai.js をルートから読み込む -->
   <script src="ai.js"></script>
 
   <script>
@@ -70,7 +70,7 @@
     function suggestMove() {
       const input = getGameState();
       try {
-        const ai = new AI();
+        const ai = new AI(); // ← ここで ai.js が読み込まれていないとエラー
         const move = ai.getMove(input);
         const arrows = ["←", "↑", "→", "↓"];
         document.getElementById("moveResult").textContent =
