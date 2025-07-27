@@ -12,14 +12,18 @@ AI.prototype.getMove = function(gridArray) {
 
   for (let direction = 0; direction < 4; direction++) {
     const newGrid = grid.clone();
-    if (newGrid.move(direction)) {
-      const score = this.expectimax(newGrid, this.searchDepth, false);
+    const moved = newGrid.move(direction);
+
+    if (moved) {
+      const score = this.expectimax(newGrid, this.searchDepth - 1, false);
       if (score > bestScore) {
         bestScore = score;
         bestMove = direction;
       }
     }
   }
+
+  // 最終的に有効な手がなかったら -1 を返す
   return bestMove;
 };
 
